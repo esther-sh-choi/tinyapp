@@ -7,7 +7,26 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com",
 };
 
-const generateRandomString = () => {};
+const generateRandomString = () => {
+  let resultStr = "";
+  for (let i = 0; i < 6; i++) {
+    let isNum = Math.random() > 0.67;
+    if (isNum) {
+      resultStr += String(Math.floor(Math.random() * 10));
+      isNum = Math.random() > 0.8;
+    } else {
+      let randomCharCode = Math.ceil(Math.random() * 122);
+      while (
+        randomCharCode < 65 ||
+        (randomCharCode > 90 && randomCharCode < 97)
+      ) {
+        randomCharCode = Math.ceil(Math.random() * 122);
+      }
+      resultStr += String.fromCharCode(randomCharCode);
+    }
+  }
+  return resultStr;
+};
 
 app.set("view engine", "ejs");
 
@@ -43,6 +62,7 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
+  console.log(generateRandomString());
   console.log(req.body); // Log the POST request body to the console
   res.send("Ok"); // Respond with 'Ok' (we will replace this)
 });
