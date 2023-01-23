@@ -29,3 +29,21 @@ app.get("/urls", (req, res) => {
   const templateVars = { urls: urlDatabase };
   res.render("urls_index", templateVars);
 });
+
+app.get("/urls/:b2xVn2", (req, res) => {
+  console.log(req.params);
+  const templateVars = {
+    id: req.params["b2xVn2"],
+    longURL: urlDatabase["b2xVn2"],
+  };
+  res.render("urls_show", templateVars);
+});
+
+app.get("/urls/:9sm5xK", (req, res) => {
+  console.log(req.params);
+  const templateVars = {
+    id: req.params["9sm5xK"],
+    longURL: urlDatabase["9sm5xK"],
+  };
+  res.render("urls_show", templateVars);
+});
