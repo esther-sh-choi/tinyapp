@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/esther-sh-choi/tinyapp/issues"
   },
-  "homepage": "https://github.com/esther-sh-choi/tinyapp#readme"
+  "homepage": "https://github.com/esther-sh-choi/tinyapp#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
 }
