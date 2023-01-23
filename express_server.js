@@ -30,19 +30,18 @@ app.get("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 });
 
-app.get("/urls/:b2xVn2", (req, res) => {
-  console.log(req.params);
-  const templateVars = {
-    id: req.params["b2xVn2"],
-    longURL: urlDatabase["b2xVn2"],
-  };
-  res.render("urls_show", templateVars);
+// GET /urls/new route needs to be defined before the GET /urls/:id route.
+// Routes defined earlier will take precedence, so if we place this route after the /urls/:id definition, any calls to /urls/new will be handled by app.get("/urls/:id", ...) because Express will think that new is a route parameter.
+// A good rule of thumb to follow is that routes should be ordered from most specific to least specific.
+
+app.get("/urls/new", (req, res) => {
+  res.render("urls_new");
 });
 
-app.get("/urls/:9sm5xK", (req, res) => {
+app.get("/urls/:id", (req, res) => {
   const templateVars = {
-    id: req.params["9sm5xK"],
-    longURL: urlDatabase["9sm5xK"],
+    id: req.params.id,
+    longURL: urlDatabase[req.params.id],
   };
   res.render("urls_show", templateVars);
 });
