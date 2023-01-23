@@ -40,7 +40,6 @@ app.get("/urls/:b2xVn2", (req, res) => {
 });
 
 app.get("/urls/:9sm5xK", (req, res) => {
-  console.log(req.params);
   const templateVars = {
     id: req.params["9sm5xK"],
     longURL: urlDatabase["9sm5xK"],
