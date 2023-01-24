@@ -51,10 +51,6 @@ app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-app.get("/", (req, res) => {
-  res.send("Hello!");
-});
-
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
@@ -83,6 +79,10 @@ app.get("/urls/new", (req, res) => {
   const templateVars = {
     user: users[req.cookies["user_id"]],
   };
+  if (!req.cookies["user_id"]) {
+    res.redirect("/login");
+  }
+
   res.render("urls_new", templateVars);
 });
 
@@ -90,6 +90,9 @@ app.get("/register", (req, res) => {
   const templateVars = {
     user: users[req.cookies["user_id"]],
   };
+  if (req.cookies["user_id"]) {
+    res.redirect("/urls");
+  }
   res.render("urls_register", templateVars);
 });
 
@@ -97,16 +100,24 @@ app.get("/login", (req, res) => {
   const templateVars = {
     user: users[req.cookies["user_id"]],
   };
+  if (req.cookies["user_id"]) {
+    res.redirect("/urls");
+  }
   res.render("urls_login", templateVars);
 });
 
 app.post("/urls", (req, res) => {
-  const shortURL = generateRandomString(6);
-  const longURL = req.body.longURL;
-  if (!Object.values(urlDatabase).includes(longURL)) {
-    urlDatabase[shortURL] = longURL;
+  if (!req.cookies["user_id"]) {
+    res.status(400).end("Cannot shorten URL when not logged in.\n");
+  } else {
+    const shortURL = generateRandomString(6);
+    const longURL = req.body.longURL;
+
+    if (!Object.values(urlDatabase).includes(longURL)) {
+      urlDatabase[shortURL] = longURL;
+    }
+    res.redirect(`/urls/${shortURL}`);
   }
-  res.redirect(`/urls/${shortURL}`);
 });
 
 app.post("/login", (req, res) => {
@@ -115,15 +126,15 @@ app.post("/login", (req, res) => {
   const userID = getUserByEmail(email)?.id;
 
   if (!email || !password) {
-    res.status(400).end("You forgot to input email/password.");
+    res.status(400).end("You forgot to input email/password.\n");
   }
 
   if (!getUserByEmail(email)) {
-    res.status(403).end("The email does not exist.");
+    res.status(403).end("The email does not exist.\n");
   }
 
   if (users[userID].password !== password) {
-    res.status(403).end("Incorrect password.");
+    res.status(403).end("Incorrect password.\n");
   }
 
   res.cookie("user_id", userID);
@@ -178,6 +189,14 @@ app.post("/urls/:id/update", (req, res) => {
 });
 
 app.get("/u/:id", (req, res) => {
-  const longURL = urlDatabase[req.params.id];
-  res.redirect(longURL);
+  const id = req.params.id;
+  if (!urlDatabase[id]) {
+    const errorVar = {
+      message: "This short URL does not exist.",
+    };
+    res.render("error_page", errorVar);
+  } else {
+    const longURL = urlDatabase[id];
+    res.redirect(longURL);
+  }
 });
