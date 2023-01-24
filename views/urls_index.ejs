@@ -20,6 +20,7 @@
   <body>
     <%- include('partials/_header') %>
     <main style="margin: 1em">
+      <% if (user) { %>
       <h3>My URLs</h3>
       <table class="table">
         <thead>
@@ -53,6 +54,7 @@
           <% } %>
         </tbody>
       </table>
+      <% } else { %> <%- include('partials/_error') %> <% } %>
     </main>
     <!-- Bootstrap JS -->
     <script

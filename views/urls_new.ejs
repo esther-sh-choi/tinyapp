@@ -37,16 +37,7 @@
           <button type="submit" class="btn btn-primary">Submit</button>
         </div>
       </form>
-      <% } else { %>
-      <div
-        class="d-flex justify-content-center m-5"
-        style="background-color: rgb(252, 255, 161); height: 200px; width: 50vw"
-      >
-        <h3 class="text-center h-90 w-90" style="margin: auto 0">
-          You need to be logged in to shorten URLs.
-        </h3>
-      </div>
-      <% } %>
+      <% } else { %> <%- include('partials/_error') %> <% } %>
     </main>
     <!-- Bootstrap JS -->
     <script
