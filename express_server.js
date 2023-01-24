@@ -1,5 +1,5 @@
 const express = require("express");
-const cookieParser = require("cookie-parser");
+const cookiesSession = require("cookie-session");
 const bcrypt = require("bcryptjs");
 const app = express();
 const PORT = 8080;
@@ -56,7 +56,12 @@ const getUserByEmail = (email) => {
 app.set("view engine", "ejs");
 
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
+app.use(
+  cookiesSession({
+    name: "session",
+    keys: ["key1"],
+  })
+);
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
@@ -73,7 +78,7 @@ const urlsForUser = (id) => {
 };
 
 app.get("/urls", (req, res) => {
-  const userID = req.cookies["user_id"];
+  const userID = req.session.user_id;
   const templateVars = {
     urls: urlsForUser(userID),
     user: users[userID],
@@ -88,10 +93,10 @@ app.get("/urls", (req, res) => {
 
 app.get("/urls/new", (req, res) => {
   const templateVars = {
-    user: users[req.cookies["user_id"]],
+    user: users[req.session.user_id],
     error: "You must be logged in to shorten URLs.",
   };
-  if (!req.cookies["user_id"]) {
+  if (!req.session.user_id) {
     res.redirect("/login");
   }
 
@@ -100,9 +105,9 @@ app.get("/urls/new", (req, res) => {
 
 app.get("/register", (req, res) => {
   const templateVars = {
-    user: users[req.cookies["user_id"]],
+    user: users[req.session.user_id],
   };
-  if (req.cookies["user_id"]) {
+  if (req.session.user_id) {
     res.redirect("/urls");
   }
   res.render("urls_register", templateVars);
@@ -110,22 +115,22 @@ app.get("/register", (req, res) => {
 
 app.get("/login", (req, res) => {
   const templateVars = {
-    user: users[req.cookies["user_id"]],
+    user: users[req.session.user_id],
   };
-  if (req.cookies["user_id"]) {
+  if (req.session.user_id) {
     res.redirect("/urls");
   }
   res.render("urls_login", templateVars);
 });
 
 app.post("/urls", (req, res) => {
-  const userID = req.cookies["user_id"];
+  const userID = req.session.user_id;
   if (!userID) {
     res.status(400).end("Cannot shorten URL when not logged in.\n");
   } else {
     const shortURL = generateRandomString(6);
     const longURL = req.body.longURL;
-    const userID = req.cookies["user_id"];
+    const userID = req.session.user_id;
     const userURLDatabase = urlsForUser(userID);
     const templateVars = {
       user: users[userID],
@@ -165,12 +170,12 @@ app.post("/login", (req, res) => {
     res.status(403).end("Incorrect password.\n");
   }
 
-  res.cookie("user_id", userID);
+  req.session.user_id = userID;
   res.redirect("/urls");
 });
 
 app.post("/logout", (req, res) => {
-  res.clearCookie("user_id");
+  req.session = null;
   res.redirect("/login");
 });
 
@@ -192,13 +197,13 @@ app.post("/register", (req, res) => {
     email: email,
     password: hashedPassword,
   };
-  res.cookie("user_id", userId);
+  req.session.user_id = userId;
   res.redirect("/urls");
 });
 
 app.get("/urls/:id", (req, res) => {
   let errorMsg = "";
-  if (!req.cookies["user_id"]) {
+  if (!req.session.user_id) {
     errorMsg = "Please register or log in to gain full access.";
   }
 
@@ -207,7 +212,7 @@ app.get("/urls/:id", (req, res) => {
     errorMsg = "This is an invalid link.";
   }
 
-  const userID = req.cookies["user_id"] ? req.cookies["user_id"] : undefined;
+  const userID = req.session.user_id ? req.session.user_id : undefined;
   const userURLDatabase = urlsForUser(userID);
   if (
     userID &&
@@ -228,7 +233,7 @@ app.get("/urls/:id", (req, res) => {
 
 app.post("/urls/:id/delete", (req, res) => {
   const shortURL = req.params.id;
-  const userID = req.cookies["user_id"] ? req.cookies["user_id"] : undefined;
+  const userID = req.session.user_id ? req.session.user_id : undefined;
   const userURLDatabase = urlsForUser(userID);
 
   if (!userID) {
@@ -245,7 +250,7 @@ app.post("/urls/:id/delete", (req, res) => {
 
 app.post("/urls/:id/update", (req, res) => {
   const shortURL = req.params.id;
-  const userID = req.cookies["user_id"];
+  const userID = req.session.user_id;
   const userURLDatabase = urlsForUser(userID);
 
   if (!userID) {
