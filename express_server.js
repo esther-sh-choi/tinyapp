@@ -87,11 +87,17 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.get("/register", (req, res) => {
-  res.render("urls_register");
+  const templateVars = {
+    user: users[req.cookies["user_id"]],
+  };
+  res.render("urls_register", templateVars);
 });
 
 app.get("/login", (req, res) => {
-  res.render("urls_login");
+  const templateVars = {
+    user: users[req.cookies["user_id"]],
+  };
+  res.render("urls_login", templateVars);
 });
 
 app.post("/urls", (req, res) => {
