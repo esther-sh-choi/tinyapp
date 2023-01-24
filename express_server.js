@@ -49,8 +49,8 @@ const generateRandomString = (length) => {
   return resultStr;
 };
 
-const getUserByEmail = (email) => {
-  return Object.values(users).find((user) => user.email === email);
+const getUserByEmail = (email, database) => {
+  return Object.values(database).find((user) => user.email === email);
 };
 
 app.set("view engine", "ejs");
@@ -156,7 +156,7 @@ app.post("/urls", (req, res) => {
 app.post("/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
-  const userID = getUserByEmail(email)?.id;
+  const userID = getUserByEmail(email, users)?.id;
 
   if (!email || !password) {
     res.status(400).end("You forgot to input email/password.\n");
@@ -187,7 +187,7 @@ app.post("/register", (req, res) => {
   if (!email || !password) {
     res.status(400).end("You forgot to input email/password.");
   }
-  if (!!getUserByEmail(email)) {
+  if (!!getUserByEmail(email, users)) {
     res.status(400).end("A user with this email exists.");
   }
 
