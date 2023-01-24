@@ -21,6 +21,18 @@
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
       </div>
       <div class="navbar-nav">
+        <% if (username) { %>
+        <div class="nav-item text-white d-flex">
+          <h6 class="mb-0 align-self-center">Logged in as:</h6>
+          <h6 class="mb-0 ml-2 text-warning align-self-center">
+            <%= username %>
+          </h6>
+          <h6 class="mb-0 mr-2 align-self-center">!</h6>
+          <form method="POST" action="/logout">
+            <button type="submit" class="btn btn-secondary">Logout</button>
+          </form>
+        </div>
+        <% } else { %>
         <form class="nav-item form-inline" method="POST" action="/login">
           <div class="form-group">
             <input
@@ -28,14 +40,12 @@
               type="text"
               name="username"
               placeholder="Username"
-              style="width: 250px; margin: 1em"
+              style="width: 250px; margin: 0 1em"
             />
             <button type="submit" class="btn btn-secondary">Login</button>
           </div>
         </form>
-        <p class="nav-item text-white align-self-center mb-0 mx-3">
-          <%= username %>
-        </p>
+        <% } %>
       </div>
     </div>
   </nav>
