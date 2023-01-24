@@ -1,6 +1,8 @@
 const express = require("express");
 const cookiesSession = require("cookie-session");
 const bcrypt = require("bcryptjs");
+const { getUserByEmail, generateRandomString } = require("./helpers");
+
 const app = express();
 const PORT = 8080;
 
@@ -28,31 +30,6 @@ const users = {
   },
 };
 
-const generateRandomString = (length) => {
-  let resultStr = "";
-  for (let i = 0; i < length; i++) {
-    let isNum = Math.random() > 0.67;
-    if (isNum) {
-      resultStr += String(Math.floor(Math.random() * 10));
-      isNum = Math.random() > 0.8;
-    } else {
-      let randomCharCode = Math.ceil(Math.random() * 122);
-      while (
-        randomCharCode < 65 ||
-        (randomCharCode > 90 && randomCharCode < 97)
-      ) {
-        randomCharCode = Math.ceil(Math.random() * 122);
-      }
-      resultStr += String.fromCharCode(randomCharCode);
-    }
-  }
-  return resultStr;
-};
-
-const getUserByEmail = (email, database) => {
-  return Object.values(database).find((user) => user.email === email);
-};
-
 app.set("view engine", "ejs");
 
 app.use(express.urlencoded({ extended: true }));
@@ -67,11 +44,11 @@ app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
 
-const urlsForUser = (id) => {
+const urlsForUser = (id, database) => {
   const userURL = {};
-  for (const shortURL in urlDatabase) {
-    if (urlDatabase[shortURL].userID === id) {
-      userURL[shortURL] = urlDatabase[shortURL];
+  for (const shortURL in database) {
+    if (database[shortURL].userID === id) {
+      userURL[shortURL] = database[shortURL];
     }
   }
   return userURL;
@@ -80,7 +57,7 @@ const urlsForUser = (id) => {
 app.get("/urls", (req, res) => {
   const userID = req.session.user_id;
   const templateVars = {
-    urls: urlsForUser(userID),
+    urls: urlsForUser(userID, urlDatabase),
     user: users[userID],
     error: "Please register or log in to gain full access.",
   };
@@ -131,7 +108,7 @@ app.post("/urls", (req, res) => {
     const shortURL = generateRandomString(6);
     const longURL = req.body.longURL;
     const userID = req.session.user_id;
-    const userURLDatabase = urlsForUser(userID);
+    const userURLDatabase = urlsForUser(userID, urlDatabase);
     const templateVars = {
       user: users[userID],
       error: "",
@@ -156,7 +133,7 @@ app.post("/urls", (req, res) => {
 app.post("/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
-  const userID = getUserByEmail(email, users)?.id;
+  const userID = getUserByEmail(email, users);
 
   if (!email || !password) {
     res.status(400).end("You forgot to input email/password.\n");
@@ -213,7 +190,7 @@ app.get("/urls/:id", (req, res) => {
   }
 
   const userID = req.session.user_id ? req.session.user_id : undefined;
-  const userURLDatabase = urlsForUser(userID);
+  const userURLDatabase = urlsForUser(userID, urlDatabase);
   if (
     userID &&
     urlDatabase[shortURL] &&
@@ -234,7 +211,7 @@ app.get("/urls/:id", (req, res) => {
 app.post("/urls/:id/delete", (req, res) => {
   const shortURL = req.params.id;
   const userID = req.session.user_id ? req.session.user_id : undefined;
-  const userURLDatabase = urlsForUser(userID);
+  const userURLDatabase = urlsForUser(userID, urlDatabase);
 
   if (!userID) {
     res.status(400).send("Please register or log in to gain full access.\n");
@@ -251,7 +228,7 @@ app.post("/urls/:id/delete", (req, res) => {
 app.post("/urls/:id/update", (req, res) => {
   const shortURL = req.params.id;
   const userID = req.session.user_id;
-  const userURLDatabase = urlsForUser(userID);
+  const userURLDatabase = urlsForUser(userID, urlDatabase);
 
   if (!userID) {
     res.status(400).send("Please register or log in to gain full access.\n");
