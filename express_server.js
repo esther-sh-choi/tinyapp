@@ -42,6 +42,10 @@ const generateRandomString = (length) => {
   return resultStr;
 };
 
+const getUserByEmail = (email) => {
+  return Object.values(users).find((user) => user.email === email);
+};
+
 app.set("view engine", "ejs");
 
 app.use(express.urlencoded({ extended: true }));
@@ -106,6 +110,16 @@ app.post("/logout", (req, res) => {
 });
 
 app.post("/register", (req, res) => {
+  const email = req.body.email;
+  const password = req.body.password;
+  if (!email || !password) {
+    res.status(400).end("You forgot to input email/password.");
+  }
+
+  if (!!getUserByEmail(email)) {
+    res.status(400).end("A user with this email exists.");
+  }
+
   const userId = generateRandomString(10);
   users[userId] = {
     id: userId,
