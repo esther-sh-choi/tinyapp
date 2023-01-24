@@ -33,17 +33,19 @@
           </form>
         </div>
         <% } else { %>
-        <form class="nav-item form-inline" method="POST" action="/login">
-          <div class="form-group">
-            <input
-              class="form-control"
-              type="text"
-              name="username"
-              placeholder="Username"
-              style="width: 250px; margin: 0 1em"
-            />
-            <button type="submit" class="btn btn-secondary">Login</button>
-          </div>
+        <form method="GET" action="/login">
+          <button type="submit" class="btn btn-primary" style="width: 100px">
+            Login
+          </button>
+        </form>
+        <form method="GET" action="/register">
+          <button
+            type="submit"
+            class="btn btn-outline-primary bg-white mx-3"
+            style="width: 100px"
+          >
+            Sign Up
+          </button>
         </form>
         <% } %>
       </div>

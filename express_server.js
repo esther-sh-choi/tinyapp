@@ -86,8 +86,12 @@ app.get("/urls/new", (req, res) => {
   res.render("urls_new", templateVars);
 });
 
-app.get("/urls/register", (req, res) => {
+app.get("/register", (req, res) => {
   res.render("urls_register");
+});
+
+app.get("/login", (req, res) => {
+  res.render("urls_login");
 });
 
 app.post("/urls", (req, res) => {
@@ -100,22 +104,30 @@ app.post("/urls", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  res.cookie("username", req.body.username);
-  res.redirect("urls/");
+  const email = req.body.email;
+  const password = req.body.password;
+  const userID = getUserByEmail(email).id;
+
+  if (!email || !password) {
+    res.status(400).end("You forgot to input email/password.");
+  }
+
+  res.cookie("user_id", userID);
+  res.redirect("/urls");
 });
 
 app.post("/logout", (req, res) => {
   res.clearCookie("user_id");
-  res.redirect("urls/");
+  res.redirect("/login");
 });
 
 app.post("/register", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
+
   if (!email || !password) {
     res.status(400).end("You forgot to input email/password.");
   }
-
   if (!!getUserByEmail(email)) {
     res.status(400).end("A user with this email exists.");
   }
@@ -123,12 +135,11 @@ app.post("/register", (req, res) => {
   const userId = generateRandomString(10);
   users[userId] = {
     id: userId,
-    email: req.body.email,
-    password: req.body.password,
+    email: email,
+    password: password,
   };
   res.cookie("user_id", userId);
-  console.log(users);
-  res.redirect("urls/");
+  res.redirect("/urls");
 });
 
 app.get("/urls/:id", (req, res) => {
