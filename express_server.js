@@ -4,8 +4,14 @@ const app = express();
 const PORT = 8080;
 
 const urlDatabase = {
-  b2xVn2: "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com",
+  b6UTxQ: {
+    longURL: "https://www.tsn.ca",
+    userID: "aJ48lW",
+  },
+  i3BoGr: {
+    longURL: "https://www.google.ca",
+    userID: "aJ48lW",
+  },
 };
 
 const users = {
@@ -114,7 +120,7 @@ app.post("/urls", (req, res) => {
     const longURL = req.body.longURL;
 
     if (!Object.values(urlDatabase).includes(longURL)) {
-      urlDatabase[shortURL] = longURL;
+      urlDatabase[shortURL].longURL = longURL;
     }
     res.redirect(`/urls/${shortURL}`);
   }
@@ -170,7 +176,7 @@ app.post("/register", (req, res) => {
 app.get("/urls/:id", (req, res) => {
   const templateVars = {
     id: req.params.id,
-    longURL: urlDatabase[req.params.id],
+    longURL: urlDatabase[req.params.id].longURL,
     user: users[req.cookies["user_id"]],
   };
   res.render("urls_show", templateVars);
@@ -184,7 +190,7 @@ app.post("/urls/:id/delete", (req, res) => {
 app.post("/urls/:id/update", (req, res) => {
   const updatedLongURL = req.body.updatedLongURL;
   const shortURL = req.params.id;
-  urlDatabase[shortURL] = updatedLongURL;
+  urlDatabase[shortURL].longURL = updatedLongURL;
   res.redirect("/urls");
 });
 
@@ -196,7 +202,7 @@ app.get("/u/:id", (req, res) => {
     };
     res.render("error_page", errorVar);
   } else {
-    const longURL = urlDatabase[id];
+    const longURL = urlDatabase[id].longURL;
     res.redirect(longURL);
   }
 });
