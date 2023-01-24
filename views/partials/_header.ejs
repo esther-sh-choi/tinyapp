@@ -22,7 +22,7 @@
       </div>
       <div class="navbar-nav">
         <form class="nav-item form-inline" method="POST" action="/login">
-          <div class="form-group mb-2">
+          <div class="form-group">
             <input
               class="form-control"
               type="text"
@@ -33,6 +33,9 @@
             <button type="submit" class="btn btn-secondary">Login</button>
           </div>
         </form>
+        <p class="nav-item text-white align-self-center mb-0 mx-3">
+          <%= username %>
+        </p>
       </div>
     </div>
   </nav>
