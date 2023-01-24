@@ -1,7 +1,11 @@
 const express = require("express");
 const cookiesSession = require("cookie-session");
 const bcrypt = require("bcryptjs");
-const { getUserByEmail, generateRandomString } = require("./helpers");
+const {
+  getUserByEmail,
+  generateRandomString,
+  urlsForUser,
+} = require("./helpers");
 
 const app = express();
 const PORT = 8080;
@@ -43,16 +47,6 @@ app.use(
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
-
-const urlsForUser = (id, database) => {
-  const userURL = {};
-  for (const shortURL in database) {
-    if (database[shortURL].userID === id) {
-      userURL[shortURL] = database[shortURL];
-    }
-  }
-  return userURL;
-};
 
 app.get("/urls", (req, res) => {
   const userID = req.session.user_id;
