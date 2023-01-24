@@ -21,11 +21,11 @@
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
       </div>
       <div class="navbar-nav">
-        <% if (username) { %>
+        <% if (user) { %>
         <div class="nav-item text-white d-flex">
           <h6 class="mb-0 align-self-center">Logged in as:</h6>
           <h6 class="mb-0 ml-2 text-warning align-self-center">
-            <%= username %>
+            <%= user.email %>
           </h6>
           <h6 class="mb-0 mr-2 align-self-center">!</h6>
           <form method="POST" action="/logout">
