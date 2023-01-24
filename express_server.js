@@ -106,10 +106,18 @@ app.post("/urls", (req, res) => {
 app.post("/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
-  const userID = getUserByEmail(email).id;
+  const userID = getUserByEmail(email)?.id;
 
   if (!email || !password) {
     res.status(400).end("You forgot to input email/password.");
+  }
+
+  if (!getUserByEmail(email)) {
+    res.status(403).end("The email does not exist.");
+  }
+
+  if (users[userID].password !== password) {
+    res.status(403).end("Incorrect password.");
   }
 
   res.cookie("user_id", userID);
