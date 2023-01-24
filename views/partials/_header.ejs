@@ -12,10 +12,27 @@
     >
       <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+    <div
+      class="collapse navbar-collapse justify-content-between"
+      id="navbarNavAltMarkup"
+    >
       <div class="navbar-nav">
         <a class="nav-item nav-link" href="/urls">My URLs</a>
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
+      </div>
+      <div class="navbar-nav">
+        <form class="nav-item form-inline" method="POST" action="/login">
+          <div class="form-group mb-2">
+            <input
+              class="form-control"
+              type="text"
+              name="username"
+              placeholder="Username"
+              style="width: 250px; margin: 1em"
+            />
+            <button type="submit" class="btn btn-secondary">Login</button>
+          </div>
+        </form>
       </div>
     </div>
   </nav>
