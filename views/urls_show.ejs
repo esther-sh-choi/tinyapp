@@ -15,7 +15,8 @@
     <%- include('partials/_header') %>
 
     <div class="card text-center">
-      <% if (user) { %>
+      <!-- If the both the user exists and longURL exists, the error message will
+      appear on the bottom of the page.-->
       <div class="card-header"></div>
       <div class="card-body">
         <h5 class="card-title">TinyURL for: <%= longURL %></h5>
@@ -43,8 +44,51 @@
           </div>
         </form>
       </div>
-      <% if (error) { %> <%- include('partials/_error') %> <% } %> <% } else {
-      %> <%- include('partials/_error') %> <% } %>
+      <% if (error) { %> <%- include('partials/_error') %> <% } %>
+      <div class="card-body d-flex flex-wrap justify-content-around">
+        <div id="visit-counts" style="margin-top: 30px">
+          <h5
+            class="p-3"
+            style="
+              background-color: rgb(216, 216, 216);
+              border-radius: 5px;
+              width: 300px;
+            "
+          >
+            Visit Count: <%= visitCount %>
+          </h5>
+          <h5
+            class="p-3"
+            style="
+              background-color: rgb(216, 216, 216);
+              border-radius: 5px;
+              width: 300px;
+            "
+          >
+            Unique Visits: <%= uniqueVisitCount %>
+          </h5>
+        </div>
+
+        <div id="visit-history" style="width: 700px; margin-top: 30px">
+          <h3>History</h3>
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Visitor ID</th>
+                <th scope="col">Timestamp</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% timestamps.map((timestamp) => { %>
+              <tr>
+                <td><%= timestamp.visitorID %></td>
+                <td><%= timestamp.time %></td>
+              </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
     <!-- Bootstrap JS -->
     <script
