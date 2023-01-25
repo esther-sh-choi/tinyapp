@@ -15,8 +15,7 @@
     <%- include('partials/_header') %>
 
     <div class="card text-center">
-      <% if (!user || error) { %> <%- include('partials/_error') %> <% } else {
-      %>
+      <% if (user) { %>
       <div class="card-header"></div>
       <div class="card-body">
         <h5 class="card-title">TinyURL for: <%= longURL %></h5>
@@ -40,7 +39,8 @@
           </div>
         </form>
       </div>
-      <% } %>
+      <% if (error) { %> <%- include('partials/_error') %> <% } %> <% } else {
+      %> <%- include('partials/_error') %> <% } %>
     </div>
     <!-- Bootstrap JS -->
     <script

@@ -11,27 +11,27 @@ const app = express();
 const PORT = 8080;
 
 const urlDatabase = {
-  b6UTxQ: {
-    longURL: "https://www.tsn.ca",
-    userID: "aJ48lW",
-  },
-  i3BoGr: {
-    longURL: "https://www.google.ca",
-    userID: "aJ48lW",
-  },
+  // b6UTxQ: {
+  //   longURL: "https://www.tsn.ca",
+  //   userID: "aJ48lW",
+  // },
+  // i3BoGr: {
+  //   longURL: "https://www.google.ca",
+  //   userID: "aJ48lW",
+  // },
 };
 
 const users = {
-  userRandomID: {
-    id: "userRandomID",
-    email: "user@example.com",
-    password: "purple-monkey-dinosaur",
-  },
-  user2RandomID: {
-    id: "user2RandomID",
-    email: "user2@example.com",
-    password: "dishwasher-funk",
-  },
+  // userRandomID: {
+  //   id: "userRandomID",
+  //   email: "user@example.com",
+  //   password: "purple-monkey-dinosaur",
+  // },
+  // user2RandomID: {
+  //   id: "user2RandomID",
+  //   email: "user2@example.com",
+  //   password: "dishwasher-funk",
+  // },
 };
 
 app.set("view engine", "ejs");
@@ -269,8 +269,24 @@ app.post("/urls/:id/", (req, res) => {
     res.status(400).send("Cannot update another user's url.\n");
   } else {
     const updatedLongURL = req.body.updatedLongURL;
-    urlDatabase[shortURL].longURL = updatedLongURL;
-    res.redirect("/urls");
+
+    const templateVars = {
+      id: shortURL,
+      longURL: userURLDatabase[shortURL].longURL,
+      user: users[userID],
+      error: "",
+    };
+
+    if (
+      updatedLongURL.includes("http://") ||
+      updatedLongURL.includes("https://")
+    ) {
+      urlDatabase[shortURL].longURL = updatedLongURL;
+      res.redirect("/urls");
+    } else {
+      templateVars.error = "Please input a valid URL.";
+      res.render("urls_show", templateVars);
+    }
   }
 });
 
