@@ -1,6 +1,7 @@
 const express = require("express");
 const methodOverride = require("method-override");
 const cookiesSession = require("cookie-session");
+const { getUserLocale } = require("get-user-locale");
 const bcrypt = require("bcryptjs");
 const {
   getUserByEmail,
@@ -10,6 +11,10 @@ const {
 
 const app = express();
 const PORT = 8080;
+
+const userLocale = getUserLocale("en-US", true);
+// server timezone is set to UTC so this is hard-coded
+const timezone = "America/Toronto";
 
 const urlDatabase = {
   // b6UTxQ: {
@@ -62,6 +67,8 @@ app.listen(PORT, () => {
 
 /*--------------------- Landing Page ---------------------*/
 
+// Ths root index redirects the user to /url when they are logged in.
+// Otherwise they are redirected to /login
 app.get("/", (req, res) => {
   const userID = req.session.user_id;
   if (userID) {
@@ -83,6 +90,8 @@ app.get("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 });
 
+// add a new shortURL associated with the longURL input by the user
+// then stores it in the urlDatabase
 app.post("/urls", (req, res) => {
   const userID = req.session.user_id;
   if (!userID) {
@@ -97,8 +106,11 @@ app.post("/urls", (req, res) => {
       error: "",
     };
 
+    // If longURL already exists
+    // or if the longURL length is 0 or doesn't include http:// or https://
+    // show error message below the edit section of the urls_new page
     if (
-      !!Object.values(userURLDatabase).filter(
+      Object.values(userURLDatabase).filter(
         (shortURL) => shortURL.longURL === longURL
       ).length
     ) {
@@ -125,7 +137,9 @@ app.post("/urls", (req, res) => {
 });
 
 /*--------------------- Create New ShortURL Route ---------------------*/
+
 // page for creating new shortURL by inputting a valid longURL
+// if user is not logged in, redirect to /login page
 app.get("/urls/new", (req, res) => {
   const templateVars = {
     user: users[req.session.user_id],
@@ -140,6 +154,7 @@ app.get("/urls/new", (req, res) => {
 
 /*--------------------- Show and Edit ShortURL Route ---------------------*/
 
+// This goes to the shortURL info, edit, and history page
 app.get("/urls/:id", (req, res) => {
   const userID = req.session.user_id ? req.session.user_id : undefined;
   const userURLDatabase = urlsForUser(userID, urlDatabase);
@@ -190,16 +205,21 @@ app.delete("/urls/:id/", (req, res) => {
     return res.status(400).send("Cannot delete another user's url.\n");
   }
 
+  // if no error, delete urlDatabase
   delete urlDatabase[req.params.id];
   res.redirect("/urls");
 });
 
+// PUT /urls/:id updates the longURL stored in the shortURL
 app.put("/urls/:id/", (req, res) => {
   const shortURL = req.params.id;
   const userID = req.session.user_id;
   const userURLDatabase = urlsForUser(userID, urlDatabase);
   const updatedLongURL = req.body.updatedLongURL;
 
+  // If user is not logged in, shortURL doesn't exist, shortURL's userID doesn't match
+  // or if the longURL length is 0 or doesn't include http:// or https://
+  // show error message below the edit section of the urls_show page
   if (!userID) {
     return res
       .status(400)
@@ -222,6 +242,7 @@ app.put("/urls/:id/", (req, res) => {
     return res.render("urls_show", templateVars);
   }
 
+  // if no errors update longURL
   urlDatabase[shortURL].longURL = updatedLongURL;
   res.redirect("/urls");
 });
@@ -244,7 +265,8 @@ app.get("/u/:id", (req, res) => {
   // Before being redirected, save current time and visitorID in the uniqueVisit object
   // Store the visitorID in the cookie to be used to count
   const longURL = urlDatabase[shortURL].longURL;
-  const currentTime = Date.now();
+  const currentDate = new Date(Date.now());
+  const localeDate = currentDate.toLocaleString(userLocale, { timezone });
 
   // check to see if user already has a visitor ID
   // it not, assign a new visitor ID and store it to cookie
@@ -262,7 +284,7 @@ app.get("/u/:id", (req, res) => {
     urlDatabase[shortURL].uniqueVisits.push(visitorID);
   }
   // store the new timestamp with the visitorID onto the urlDatabase
-  urlDatabase[shortURL].timestamps.push({ visitorID, time: currentTime });
+  urlDatabase[shortURL].timestamps.push({ visitorID, time: localeDate });
   // increment the visitCount by one
   urlDatabase[shortURL].visitCount++;
   res.redirect(longURL);
@@ -308,6 +330,7 @@ app.post("/register", (req, res) => {
       .end("A user with this email exists.\n");
   }
 
+  // Store user input email and hashed password if there are no errors
   const userId = generateRandomString(10);
   users[userId] = {
     id: userId,
@@ -320,6 +343,8 @@ app.post("/register", (req, res) => {
 
 /*--------------------- Login Route ---------------------*/
 
+// GET /login renders the login page
+// if user is already signed in, they will be redirected to GET /urls
 app.get("/login", (req, res) => {
   const templateVars = {
     user: users[req.session.user_id],
@@ -366,6 +391,7 @@ app.post("/login", (req, res) => {
       .send("Incorrect password.\n");
   }
 
+  // set the user cookie to the userID stored in the userDatabase
   req.session.user_id = userID;
   res.redirect("/urls");
 });
@@ -374,6 +400,6 @@ app.post("/login", (req, res) => {
 
 // clear userID cookie when logging out
 app.post("/logout", (req, res) => {
-  req.session = null;
+  req.session.user_id = null;
   res.redirect("/login");
 });
