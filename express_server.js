@@ -48,6 +48,14 @@ app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
 
+app.get("/", (req, res) => {
+  const userID = req.session.user_id;
+  if (userID) {
+    res.redirect("/urls");
+  }
+  res.redirect("/login");
+});
+
 app.get("/urls", (req, res) => {
   const userID = req.session.user_id;
   const templateVars = {
@@ -65,7 +73,7 @@ app.get("/urls", (req, res) => {
 app.get("/urls/new", (req, res) => {
   const templateVars = {
     user: users[req.session.user_id],
-    error: "You must be logged in to shorten URLs.",
+    error: "",
   };
   if (!req.session.user_id) {
     res.redirect("/login");
@@ -77,6 +85,7 @@ app.get("/urls/new", (req, res) => {
 app.get("/register", (req, res) => {
   const templateVars = {
     user: users[req.session.user_id],
+    error: "",
   };
   if (req.session.user_id) {
     res.redirect("/urls");
@@ -87,6 +96,7 @@ app.get("/register", (req, res) => {
 app.get("/login", (req, res) => {
   const templateVars = {
     user: users[req.session.user_id],
+    error: "",
   };
   if (req.session.user_id) {
     res.redirect("/urls");
@@ -107,19 +117,20 @@ app.post("/urls", (req, res) => {
       user: users[userID],
       error: "",
     };
+
     if (
       !!Object.values(userURLDatabase).filter(
         (shortURL) => shortURL.longURL === longURL
       ).length
     ) {
       templateVars.error = "This URL already exists.";
-      res.render("urls_show", templateVars);
-    } else if (!longURL.length) {
-      templateVars.error = "Please input a valid URL.";
-      res.render("urls_show", templateVars);
-    } else {
+      res.render("urls_new", templateVars);
+    } else if (longURL.includes("http://") || longURL.includes("https://")) {
       urlDatabase[shortURL] = { longURL, userID };
       res.redirect(`/urls/${shortURL}`);
+    } else {
+      templateVars.error = "Please input a valid URL.";
+      res.render("urls_new", templateVars);
     }
   }
 });
@@ -128,17 +139,32 @@ app.post("/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
   const userID = getUserByEmail(email, users);
+  const templateVars = {
+    user: users[userID],
+  };
 
   if (!email || !password) {
-    res.status(400).end("You forgot to input email/password.\n");
+    templateVars.error = "You forgot to input email/password.";
+    res
+      .status(400)
+      .render("urls_login", templateVars)
+      .end("Email/password field is empty.\n");
   }
 
   if (!userID) {
-    res.status(403).end("The email does not exist.\n");
+    templateVars.error = "This email does not exist.";
+    res
+      .status(403)
+      .render("urls_login", templateVars)
+      .end("The email does not exist.\n");
   }
 
   if (!bcrypt.compareSync(password, users[userID].password)) {
-    res.status(403).end("Incorrect password.\n");
+    templateVars.error = "Incorrect password.";
+    res
+      .status(403)
+      .render("urls_login", templateVars)
+      .end("Incorrect password.\n");
   }
 
   req.session.user_id = userID;
@@ -154,12 +180,23 @@ app.post("/register", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
   const hashedPassword = bcrypt.hashSync(password, 10);
+  const templateVars = {
+    user: "",
+  };
 
   if (!email || !password) {
-    res.status(400).end("You forgot to input email/password.");
+    templateVars.error = "You forgot to input email/password.";
+    res
+      .status(400)
+      .render("urls_register", templateVars)
+      .end("Email/password field is empty.\n");
   }
-  if (!!getUserByEmail(email, users)) {
-    res.status(400).end("A user with this email exists.");
+  if (getUserByEmail(email, users) !== undefined) {
+    templateVars.error = "A user with this email exists.";
+    res
+      .status(400)
+      .render("urls_register", templateVars)
+      .end("A user with this email exists.\n");
   }
 
   const userId = generateRandomString(10);
@@ -219,7 +256,7 @@ app.post("/urls/:id/delete", (req, res) => {
   }
 });
 
-app.post("/urls/:id/update", (req, res) => {
+app.post("/urls/:id/", (req, res) => {
   const shortURL = req.params.id;
   const userID = req.session.user_id;
   const userURLDatabase = urlsForUser(userID, urlDatabase);
