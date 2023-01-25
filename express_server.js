@@ -1,4 +1,5 @@
 const express = require("express");
+const methodOverride = require("method-override");
 const cookiesSession = require("cookie-session");
 const bcrypt = require("bcryptjs");
 const {
@@ -36,6 +37,7 @@ const users = {
 
 app.set("view engine", "ejs");
 
+app.use(methodOverride("_method"));
 app.use(express.urlencoded({ extended: true }));
 app.use(
   cookiesSession({
@@ -239,7 +241,7 @@ app.get("/urls/:id", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
-app.post("/urls/:id/delete", (req, res) => {
+app.delete("/urls/:id/delete", (req, res) => {
   const shortURL = req.params.id;
   const userID = req.session.user_id ? req.session.user_id : undefined;
   const userURLDatabase = urlsForUser(userID, urlDatabase);
@@ -256,7 +258,7 @@ app.post("/urls/:id/delete", (req, res) => {
   }
 });
 
-app.post("/urls/:id/", (req, res) => {
+app.put("/urls/:id/", (req, res) => {
   const shortURL = req.params.id;
   const userID = req.session.user_id;
   const userURLDatabase = urlsForUser(userID, urlDatabase);
