@@ -12,18 +12,28 @@ const {
 const app = express();
 const PORT = 8080;
 
+// Set server time to my location
+process.env.TZ = "America/Toronto";
 const userLocale = getUserLocale("en-US", true);
-// server timezone is set to UTC so this is hard-coded
-const timezone = "America/Toronto";
 
 const urlDatabase = {
   // b6UTxQ: {
   //   longURL: "https://www.tsn.ca",
   //   userID: "aJ48lW",
+  //   uniqueVisit: [visitorID1, visitorID2, ...],
+  //   timestamp: [
+  //     {visitorID, date}, {visitorID, date}
+  //   ],
+  //   visitCount: 40,
   // },
   // i3BoGr: {
   //   longURL: "https://www.google.ca",
   //   userID: "aJ48lW",
+  //   uniqueVisit: [visitorID1, visitorID2, ...],
+  //   timestamp: [
+  //     {visitorID, date}, {visitorID, date}
+  //   ],
+  //   visitCount: 30,
   // },
 };
 
@@ -32,21 +42,13 @@ const users = {
   //   id: "userRandomID",
   //   email: "user@example.com",
   //   password: "purple-monkey-dinosaur",
-  //   uniqueVisit: [visitorID1, visitorID2, ...],
-  //   timestamp: [
-  //     {visitorID, date}, {visitorID, date}
-  //   ],
-  //   visitCount: 40,
+  //   visitorID: "visitor_id",
   // },
   // user2RandomID: {
   //   id: "user2RandomID",
   //   email: "user2@example.com",
   //   password: "dishwasher-funk",
-  //   uniqueVisit: [visitorID1, visitorID2, ...],
-  //   timestamp: [
-  //     {visitorID, date}, {visitorID, date}
-  //   ],
-  //   visitCount: 30,
+  //   visitorID: "visitor_id",
   // },
 };
 
@@ -235,6 +237,9 @@ app.put("/urls/:id/", (req, res) => {
     const templateVars = {
       id: shortURL,
       longURL: userURLDatabase[shortURL].longURL,
+      visitCount: urlDatabase[shortURL]?.visitCount,
+      uniqueVisitCount: urlDatabase[shortURL]?.uniqueVisits.length,
+      timestamps: urlDatabase[shortURL]?.timestamps,
       user: users[userID],
       error: "",
     };
@@ -266,7 +271,7 @@ app.get("/u/:id", (req, res) => {
   // Store the visitorID in the cookie to be used to count
   const longURL = urlDatabase[shortURL].longURL;
   const currentDate = new Date(Date.now());
-  const localeDate = currentDate.toLocaleString(userLocale, { timezone });
+  const localeDate = currentDate.toLocaleString(userLocale);
 
   // check to see if user already has a visitor ID
   // it not, assign a new visitor ID and store it to cookie
@@ -311,6 +316,7 @@ app.post("/register", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
   const hashedPassword = bcrypt.hashSync(password, 10);
+
   const templateVars = {
     user: "",
   };
@@ -332,12 +338,17 @@ app.post("/register", (req, res) => {
 
   // Store user input email and hashed password if there are no errors
   const userId = generateRandomString(10);
+  // Store unique visitorID if there are no errors
+  const visitorID = generateRandomString(8);
+
   users[userId] = {
     id: userId,
     email: email,
     password: hashedPassword,
+    visitorID,
   };
   req.session.user_id = userId;
+  req.session.visior_id = visitorID;
   res.redirect("/urls");
 });
 
@@ -400,6 +411,6 @@ app.post("/login", (req, res) => {
 
 // clear userID cookie when logging out
 app.post("/logout", (req, res) => {
-  req.session.user_id = null;
+  req.session = null;
   res.redirect("/login");
 });
