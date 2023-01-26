@@ -2,9 +2,24 @@
 
 TinyApp is a full stack web application built with Node and Express that allows users to shorten long URLs (à la bit.ly).
 
-The website is using Bootstrap with a little bit of inline CSS.
+The front-end is implemented using Bootstrap with a little bit of inline CSS.
+
+## Table of Content
 
 ## Final Product
+
+- ###### [Description] (https://github.com/esther-sh-choi/tinyapp#esthers-tinyapp-project)
+- ###### [Final Product] (https://github.com/esther-sh-choi/tinyapp#final-product)
+  - [Registration/Login] (https://github.com/esther-sh-choi/tinyapp#registerlogin-page)
+  - [Creating New Short URLs] (https://github.com/esther-sh-choi/tinyapp#create-new-short-url-page)
+  - [Main Page] (https://github.com/esther-sh-choi/tinyapp#main-page)
+  - [Editing Short URLs] (https://github.com/esther-sh-choi/tinyapp#short-url-detailedit-page)
+  - [Short URLs Visit Log] (https://github.com/esther-sh-choi/tinyapp#short-url-detailedit-page)
+  - [Example of Error Message] (https://github.com/esther-sh-choi/tinyapp#example-of-error-message-on-detailedit-page)
+  - [Responsive Design] (https://github.com/esther-sh-choi/tinyapp#short-url-detailedit-page-mobile)
+  - [Error Page] (https://github.com/esther-sh-choi/tinyapp#error-page)
+- ###### [Dependencies] (https://github.com/esther-sh-choi/tinyapp#dependencies)
+- ###### [Getting Started] (https://github.com/esther-sh-choi/tinyapp#getting-started)
 
 #### Register/Login Page
 
@@ -33,7 +48,7 @@ The website is using Bootstrap with a little bit of inline CSS.
 
 - Edit the url associated with this particular short ID.
 - If it does not start with http:// or https:// or if the field is left empty, it will return an error.
-- This plage displays:
+- This page displays:
   - the total number of visits using the shortURL;
   - the total number of unique visits (one visit per _visitor ID_);
   - and the history of all the visits (visitor ID and timestamp).
@@ -51,7 +66,7 @@ The website is using Bootstrap with a little bit of inline CSS.
 
 #### Short URL Detail/Edit Page (Mobile)
 
-- This is an example of the Detail page responsve design using Flexbox.
+- This is an example of the Detail page responsve design using Bootstrap and CSS Flexbox.
   !["Screenshot of /url/:id page responsive design"](https://github.com/esther-sh-choi/tinyapp/blob/main/docs/urls_show_responsive.png?raw=true)
 
 #### Error Page
