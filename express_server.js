@@ -1,4 +1,6 @@
 const express = require("express");
+const favicon = require("serve-favicon");
+const path = require("path");
 const methodOverride = require("method-override");
 const cookiesSession = require("cookie-session");
 const { getUserLocale } = require("get-user-locale");
@@ -54,6 +56,7 @@ const users = {
 
 app.set("view engine", "ejs");
 
+app.use(favicon(__dirname + "/favicon.ico"));
 app.use(methodOverride("_method"));
 app.use(express.urlencoded({ extended: true }));
 app.use(
