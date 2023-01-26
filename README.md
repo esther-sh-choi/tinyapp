@@ -8,18 +8,18 @@ The front-end is implemented using Bootstrap with a little bit of inline CSS.
 
 ## Final Product
 
-- ###### [Description] (https://github.com/esther-sh-choi/tinyapp#esthers-tinyapp-project)
-- ###### [Final Product] (https://github.com/esther-sh-choi/tinyapp#final-product)
-  - [Registration/Login] (https://github.com/esther-sh-choi/tinyapp#registerlogin-page)
-  - [Creating New Short URLs] (https://github.com/esther-sh-choi/tinyapp#create-new-short-url-page)
-  - [Main Page] (https://github.com/esther-sh-choi/tinyapp#main-page)
-  - [Editing Short URLs] (https://github.com/esther-sh-choi/tinyapp#short-url-detailedit-page)
-  - [Short URLs Visit Log] (https://github.com/esther-sh-choi/tinyapp#short-url-detailedit-page)
-  - [Example of Error Message] (https://github.com/esther-sh-choi/tinyapp#example-of-error-message-on-detailedit-page)
-  - [Responsive Design] (https://github.com/esther-sh-choi/tinyapp#short-url-detailedit-page-mobile)
-  - [Error Page] (https://github.com/esther-sh-choi/tinyapp#error-page)
-- ###### [Dependencies] (https://github.com/esther-sh-choi/tinyapp#dependencies)
-- ###### [Getting Started] (https://github.com/esther-sh-choi/tinyapp#getting-started)
+- [Description](https://github.com/esther-sh-choi/tinyapp#esthers-tinyapp-project)
+- [Final Product](https://github.com/esther-sh-choi/tinyapp#final-product)
+  - [Registration/Login](https://github.com/esther-sh-choi/tinyapp#registerlogin-page)
+  - [Creating New Short URLs](https://github.com/esther-sh-choi/tinyapp#create-new-short-url-page)
+  - [Main Page](https://github.com/esther-sh-choi/tinyapp#main-page)
+  - [Editing Short URLs](https://github.com/esther-sh-choi/tinyapp#short-url-detailedit-page)
+  - [Short URLs Visit Log](https://github.com/esther-sh-choi/tinyapp#short-url-detailedit-page)
+  - [Example of Error Message](https://github.com/esther-sh-choi/tinyapp#example-of-error-message-on-detailedit-page)
+  - [Responsive Design](https://github.com/esther-sh-choi/tinyapp#short-url-detailedit-page-mobile)
+  - [Error Page](https://github.com/esther-sh-choi/tinyapp#error-page)
+- [Dependencies](https://github.com/esther-sh-choi/tinyapp#dependencies)
+- [Getting Started](https://github.com/esther-sh-choi/tinyapp#getting-started)
 
 #### Register/Login Page
 
