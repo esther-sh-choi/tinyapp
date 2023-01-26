@@ -6,8 +6,6 @@ The front-end is implemented using Bootstrap with a little bit of inline CSS.
 
 ## Table of Content
 
-## Final Product
-
 - [Description](https://github.com/esther-sh-choi/tinyapp#esthers-tinyapp-project)
 - [Final Product](https://github.com/esther-sh-choi/tinyapp#final-product)
   - [Registration/Login](https://github.com/esther-sh-choi/tinyapp#registerlogin-page)
@@ -20,6 +18,8 @@ The front-end is implemented using Bootstrap with a little bit of inline CSS.
   - [Error Page](https://github.com/esther-sh-choi/tinyapp#error-page)
 - [Dependencies](https://github.com/esther-sh-choi/tinyapp#dependencies)
 - [Getting Started](https://github.com/esther-sh-choi/tinyapp#getting-started)
+
+## Final Product
 
 #### Register/Login Page
 
