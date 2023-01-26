@@ -10,6 +10,7 @@ const {
   generateRandomString,
   urlsForUser,
 } = require("./helpers");
+const { users, urlDatabase } = require("./userDB");
 
 const app = express();
 const PORT = 8080;
@@ -17,42 +18,6 @@ const PORT = 8080;
 // Set server time to my location
 process.env.TZ = "America/Toronto";
 const userLocale = getUserLocale("en-US", true);
-
-const urlDatabase = {
-  // b6UTxQ: {
-  //   longURL: "https://www.tsn.ca",
-  //   userID: "aJ48lW",
-  //   uniqueVisit: [visitorID1, visitorID2, ...],
-  //   timestamp: [
-  //     {visitorID, date}, {visitorID, date}
-  //   ],
-  //   visitCount: 40,
-  // },
-  // i3BoGr: {
-  //   longURL: "https://www.google.ca",
-  //   userID: "aJ48lW",
-  //   uniqueVisit: [visitorID1, visitorID2, ...],
-  //   timestamp: [
-  //     {visitorID, date}, {visitorID, date}
-  //   ],
-  //   visitCount: 30,
-  // },
-};
-
-const users = {
-  // userRandomID: {
-  //   id: "userRandomID",
-  //   email: "user@example.com",
-  //   password: "purple-monkey-dinosaur",
-  //   visitorID: "visitor_id",
-  // },
-  // user2RandomID: {
-  //   id: "user2RandomID",
-  //   email: "user2@example.com",
-  //   password: "dishwasher-funk",
-  //   visitorID: "visitor_id",
-  // },
-};
 
 app.set("view engine", "ejs");
 
@@ -316,8 +281,7 @@ app.get("/register", (req, res) => {
 
 // this method is called when form is submitted in urls_login.ejs
 app.post("/register", (req, res) => {
-  const email = req.body.email;
-  const password = req.body.password;
+  const { email, password } = req.body;
   const hashedPassword = bcrypt.hashSync(password, 10);
 
   const templateVars = {
@@ -374,8 +338,7 @@ app.get("/login", (req, res) => {
 
 // this method is called when form is submitted in urls_login.ejs
 app.post("/login", (req, res) => {
-  const email = req.body.email;
-  const password = req.body.password;
+  const { email, password } = req.body;
   const userID = getUserByEmail(email, users);
   const templateVars = {
     user: users[userID],
