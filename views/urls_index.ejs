@@ -25,25 +25,31 @@
       <table class="table">
         <thead>
           <tr>
-            <th scope="col">Short URL ID</th>
-            <th scope="col">Long URL</th>
-            <th scope="col">Edit</th>
-            <th scope="col">Delete</th>
+            <th class="text-center" scope="col">Short URL ID</th>
+            <th class="text-center" scope="col">Long URL</th>
+            <th class="text-center" scope="col">Date Created</th>
+            <th class="text-center" scope="col">Visits</th>
+            <th class="text-center" scope="col">Unique Visits</th>
+            <th class="text-center" scope="col">Edit</th>
+            <th class="text-center" scope="col">Delete</th>
           </tr>
         </thead>
         <tbody>
           <% for (let id in urls) { %>
           <tr>
-            <td><%= id %></td>
-            <td><%= urls[id].longURL %></td>
-            <td>
+            <td class="text-center"><%= id %></td>
+            <td class="text-center"><%= urls[id].longURL %></td>
+            <td class="text-center"><%= urls[id].createdDate %></td>
+            <td class="text-center"><%= urls[id].visitCount %></td>
+            <td class="text-center"><%= urls[id].uniqueVisits.length %></td>
+            <td class="text-center">
               <form method="GET" action="/urls/<%= id %>">
                 <button type="submit" class="btn btn-outline-primary">
                   Edit
                 </button>
               </form>
             </td>
-            <td>
+            <td class="text-center">
               <form method="POST" action="/urls/<%= id %>?_method=DELETE">
                 <button type="submit" class="btn btn-outline-danger">
                   Delete

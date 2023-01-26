@@ -62,45 +62,49 @@ app.get("/urls", (req, res) => {
 app.post("/urls", (req, res) => {
   const userID = req.session.user_id;
   if (!userID) {
-    res.status(400).end("Cannot shorten URL when not logged in.\n");
-  } else {
-    const shortURL = generateRandomString(6);
-    const longURL = req.body.longURL;
-    const userID = req.session.user_id;
-    const userURLDatabase = urlsForUser(userID, urlDatabase);
-    const templateVars = {
-      user: users[userID],
-      error: "",
-    };
-
-    // If longURL already exists
-    // or if the longURL length is 0 or doesn't include http:// or https://
-    // show error message below the edit section of the urls_new page
-    if (
-      Object.values(userURLDatabase).filter(
-        (shortURL) => shortURL.longURL === longURL
-      ).length
-    ) {
-      templateVars.error = "This URL already exists.";
-      return res.render("urls_new", templateVars);
-    } else if (
-      !longURL.length ||
-      !(longURL.includes("http://") || longURL.includes("https://"))
-    ) {
-      templateVars.error = "Please input a valid URL.";
-      return res.render("urls_new", templateVars);
-    }
-
-    // reset visit data when shortURL is created or edited
-    urlDatabase[shortURL] = {
-      longURL,
-      userID,
-      uniqueVisits: [],
-      timestamps: [],
-      visitCount: 0,
-    };
-    res.redirect(`/urls/${shortURL}`);
+    return res.status(400).end("Cannot shorten URL when not logged in.\n");
   }
+
+  const shortURL = generateRandomString(6);
+  const longURL = req.body.longURL;
+  const userURLDatabase = urlsForUser(userID, urlDatabase);
+  const templateVars = {
+    user: users[userID],
+    error: "",
+  };
+
+  // If longURL already exists
+  // or if the longURL length is 0 or doesn't include http:// or https://
+  // show error message below the edit section of the urls_new page
+  if (
+    Object.values(userURLDatabase).filter(
+      (shortURL) => shortURL.longURL === longURL
+    ).length
+  ) {
+    templateVars.error = "This URL already exists.";
+    return res.render("urls_new", templateVars);
+  } else if (
+    !longURL.length ||
+    !(longURL.includes("http://") || longURL.includes("https://"))
+  ) {
+    templateVars.error = "Please input a valid URL.";
+    return res.render("urls_new", templateVars);
+  }
+
+  // store the date and time when shortURL is created
+  const currentDate = new Date(Date.now());
+  const localeDate = currentDate.toLocaleString(userLocale);
+
+  // reset visit data when shortURL is created or edited
+  urlDatabase[shortURL] = {
+    longURL,
+    userID,
+    createdDate: localeDate,
+    uniqueVisits: [],
+    timestamps: [],
+    visitCount: 0,
+  };
+  res.redirect(`/urls/${shortURL}`);
 });
 
 /*--------------------- Create New ShortURL Route ---------------------*/
@@ -129,6 +133,7 @@ app.get("/urls/:id", (req, res) => {
   const templateVars = {
     id: shortURL,
     longURL: userURLDatabase[shortURL]?.longURL,
+    createdDate: userURLDatabase[shortURL]?.createdDate,
     visitCount: urlDatabase[shortURL]?.visitCount,
     uniqueVisitCount: urlDatabase[shortURL]?.uniqueVisits.length,
     timestamps: urlDatabase[shortURL]?.timestamps,
@@ -203,6 +208,7 @@ app.put("/urls/:id/", (req, res) => {
       id: shortURL,
       longURL: userURLDatabase[shortURL].longURL,
       visitCount: urlDatabase[shortURL]?.visitCount,
+      createdDate: urlDatabase[shortURL]?.createdDate,
       uniqueVisitCount: urlDatabase[shortURL]?.uniqueVisits.length,
       timestamps: urlDatabase[shortURL]?.timestamps,
       user: users[userID],

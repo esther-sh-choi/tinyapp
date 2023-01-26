@@ -31,29 +31,31 @@ The front-end is implemented using Bootstrap with a little bit of inline CSS.
 
 #### Create New Short URL Page
 
-- Enter the url to shorten. A 6 characters-long alphanumeric shortURL will be randomly generated.
-- In order to use the shortURL, follow the route _http://localhost:8080/u/[shortURL]_
+- Enter the URL to shorten. A 6 characters-long alphanumeric short URL will be randomly generated.
+- In order to use the short URL, follow the route _http://localhost:8080/u/[shortURL]_
 - If it does not start with http:// or https:// or if the field is left empty, it will return an error.
 
   !["Screenshot of /url/new page"](https://github.com/esther-sh-choi/tinyapp/blob/main/docs/urls_new.png?raw=true)
 
 #### Main Page
 
-- Keep track of all of your short URLs and manage them (ie., edit and delete).
-- Other users cannot view or manipulate your url data.
+- Keep track of all of user's short URLs and manage them (ie., edit and delete).
+- The tables displays the long URL, date created, number of visits, and the number of unique visits for each short URL.
+- Other users cannot view or manipulate your URL data.
 
   !["Screenshot of /url page"](https://github.com/esther-sh-choi/tinyapp/blob/main/docs/urls_index.png?raw=true)
 
 #### Short URL Detail/Edit Page
 
-- Edit the url associated with this particular short ID.
+- Shows which route the selected short URL redirects to.
+- Shows the date and time when URL was created.
+- Edit the URL associated with this particular short ID.
 - If it does not start with http:// or https:// or if the field is left empty, it will return an error.
 - This page displays:
-  - the total number of visits using the shortURL;
+  - the total number of visits using the short URL;
   - the total number of unique visits (one visit per _visitor ID_);
   - and the history of all the visits (visitor ID and timestamp).
-- What to know about the visitor ID:
-
+- _What to know about the visitor ID:_
   - The 8 character alphanumeric visitor ID is generated at the time of registration and it is stored to the user's database.
   - Each time user logs in, this unique visitor ID is stored to the cookie until sign out.
   - If the user is not logged in, the visitor ID will be generated and stored in the cookie and will remain in the browser until cookie is cleared or expires.
@@ -64,7 +66,7 @@ The front-end is implemented using Bootstrap with a little bit of inline CSS.
 
 !["Screenshot of /url/:id page error message"](https://github.com/esther-sh-choi/tinyapp/blob/main/docs/error_message.png?raw=true)
 
-#### Short URL Detail/Edit Page (Mobile)
+#### Short URL Detail/Edit Page (Portrait Mode)
 
 - This is an example of the Detail page responsve design using Bootstrap and CSS Flexbox.
   !["Screenshot of /url/:id page responsive design"](https://github.com/esther-sh-choi/tinyapp/blob/main/docs/urls_show_responsive.png?raw=true)
