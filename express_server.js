@@ -294,7 +294,7 @@ app.post("/register", (req, res) => {
       .render("register", templateVars)
       .end("Email/password field is empty.\n");
   }
-  if (getUserByEmail(email, users) !== undefined) {
+  if (getUserByEmail(email, users)) {
     templateVars.error = "A user with this email exists.";
     res
       .status(400)
