@@ -14,7 +14,7 @@ const getUserByEmail = (email, database) => {
 
 /**
  * This function returns a string of alphanumeric values given the length of the resulting string.
- * The chance of number appearing as one of the string is 33%.
+ * The chance of number appearing as one of the string is 25%.
  * Alphabets can include both upper and lower case.
  *
  * @param {integer} length The integer determines the length of the randomly generated string.
@@ -23,10 +23,10 @@ const getUserByEmail = (email, database) => {
 const generateRandomString = (length) => {
   let resultStr = "";
   for (let i = 0; i < length; i++) {
-    let isNum = Math.random() > 0.67;
+    let isNum = Math.random() > 0.75;
     if (isNum) {
       resultStr += String(Math.floor(Math.random() * 10));
-      isNum = Math.random() > 0.8;
+      isNum = Math.random() > 0.75;
     } else {
       let randomCharCode = Math.ceil(Math.random() * 122);
       while (
