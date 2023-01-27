@@ -284,7 +284,7 @@ app.post("/register", (req, res) => {
   const hashedPassword = bcrypt.hashSync(password, 10);
 
   const templateVars = {
-    user: "",
+    user: null,
   };
 
   if (!email || !password) {
@@ -340,7 +340,7 @@ app.post("/login", (req, res) => {
   const { email, password } = req.body;
   const userID = getUserByEmail(email, users);
   const templateVars = {
-    user: "",
+    user: null,
   };
 
   if (!email || !password) {
