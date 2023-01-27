@@ -90,3 +90,4 @@ The front-end is implemented using Bootstrap with a little bit of inline CSS.
 
 - Install all dependencies (using the `npm install` command).
 - Run the development web server using the `node express_server.js` command.
+- Run the nodemon development web server using the `npm start` command.
