@@ -289,17 +289,11 @@ app.post("/register", (req, res) => {
 
   if (!email || !password) {
     templateVars.error = "You forgot to input email/password.";
-    res
-      .status(400)
-      .render("register", templateVars)
-      .end("Email/password field is empty.\n");
+    return res.status(400).render("register", templateVars);
   }
   if (getUserByEmail(email, users)) {
     templateVars.error = "A user with this email exists.";
-    res
-      .status(400)
-      .render("register", templateVars)
-      .end("A user with this email exists.\n");
+    return res.status(400).render("register", templateVars);
   }
 
   // Store user input email and hashed password if there are no errors
@@ -343,28 +337,19 @@ app.post("/login", (req, res) => {
     user: null,
   };
 
-  if (!email || !password) {
+  if (!email || !password || (!email && !password)) {
     templateVars.error = "You forgot to input email/password.";
-    return res
-      .status(400)
-      .render("login", templateVars)
-      .send("Email/password field is empty.\n");
+    return res.status(400).render("login", templateVars);
   }
 
   if (!userID) {
     templateVars.error = "This email does not exist.";
-    return res
-      .status(403)
-      .render("login", templateVars)
-      .send("The email does not exist.\n");
+    return res.status(403).render("login", templateVars);
   }
 
   if (!bcrypt.compareSync(password, users[userID].password)) {
     templateVars.error = "Incorrect password.";
-    return res
-      .status(403)
-      .render("login", templateVars)
-      .send("Incorrect password.\n");
+    return res.status(403).render("login", templateVars);
   }
 
   // set the user cookie to the userID stored in the userDatabase
