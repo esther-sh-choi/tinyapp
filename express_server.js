@@ -28,10 +28,6 @@ app.use(
   })
 );
 
-app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}!`);
-});
-
 /*--------------------- Landing Page ---------------------*/
 
 // Ths root index redirects the user to /url when they are logged in.
@@ -279,30 +275,30 @@ app.get("/register", (req, res) => {
   if (req.session.user_id) {
     res.redirect("/urls");
   }
-  res.render("urls_register", templateVars);
+  res.render("register", templateVars);
 });
 
-// this method is called when form is submitted in urls_login.ejs
+// this method is called when form is submitted in login.ejs
 app.post("/register", (req, res) => {
   const { email, password } = req.body;
   const hashedPassword = bcrypt.hashSync(password, 10);
 
   const templateVars = {
-    user: "",
+    user: null,
   };
 
   if (!email || !password) {
     templateVars.error = "You forgot to input email/password.";
     res
       .status(400)
-      .render("urls_register", templateVars)
+      .render("register", templateVars)
       .end("Email/password field is empty.\n");
   }
-  if (getUserByEmail(email, users) !== undefined) {
+  if (getUserByEmail(email, users)) {
     templateVars.error = "A user with this email exists.";
     res
       .status(400)
-      .render("urls_register", templateVars)
+      .render("register", templateVars)
       .end("A user with this email exists.\n");
   }
 
@@ -336,38 +332,38 @@ app.get("/login", (req, res) => {
   if (req.session.user_id) {
     res.redirect("/urls");
   }
-  res.render("urls_login", templateVars);
+  res.render("login", templateVars);
 });
 
-// this method is called when form is submitted in urls_login.ejs
+// this method is called when form is submitted in login.ejs
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
   const userID = getUserByEmail(email, users);
   const templateVars = {
-    user: users[userID],
+    user: null,
   };
 
   if (!email || !password) {
     templateVars.error = "You forgot to input email/password.";
-    res
+    return res
       .status(400)
-      .render("urls_login", templateVars)
+      .render("login", templateVars)
       .send("Email/password field is empty.\n");
   }
 
   if (!userID) {
     templateVars.error = "This email does not exist.";
-    res
+    return res
       .status(403)
-      .render("urls_login", templateVars)
+      .render("login", templateVars)
       .send("The email does not exist.\n");
   }
 
   if (!bcrypt.compareSync(password, users[userID].password)) {
     templateVars.error = "Incorrect password.";
-    res
+    return res
       .status(403)
-      .render("urls_login", templateVars)
+      .render("login", templateVars)
       .send("Incorrect password.\n");
   }
 
@@ -382,4 +378,10 @@ app.post("/login", (req, res) => {
 app.post("/logout", (req, res) => {
   req.session = null;
   res.redirect("/login");
+});
+
+/*--------------------- Start Server ---------------------*/
+
+app.listen(PORT, () => {
+  console.log(`Example app listening on port ${PORT}!`);
 });
