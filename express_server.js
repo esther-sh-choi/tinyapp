@@ -28,6 +28,10 @@ app.use(
   })
 );
 
+app.listen(PORT, () => {
+  console.log(`Example app listening on port ${PORT}!`);
+});
+
 /*--------------------- Landing Page ---------------------*/
 
 // Ths root index redirects the user to /url when they are logged in.
@@ -340,12 +344,12 @@ app.post("/login", (req, res) => {
   const { email, password } = req.body;
   const userID = getUserByEmail(email, users);
   const templateVars = {
-    user: "",
+    user: users[userID],
   };
 
   if (!email || !password) {
     templateVars.error = "You forgot to input email/password.";
-    return res
+    res
       .status(400)
       .render("urls_login", templateVars)
       .send("Email/password field is empty.\n");
@@ -353,7 +357,7 @@ app.post("/login", (req, res) => {
 
   if (!userID) {
     templateVars.error = "This email does not exist.";
-    return res
+    res
       .status(403)
       .render("urls_login", templateVars)
       .send("The email does not exist.\n");
@@ -361,7 +365,7 @@ app.post("/login", (req, res) => {
 
   if (!bcrypt.compareSync(password, users[userID].password)) {
     templateVars.error = "Incorrect password.";
-    return res
+    res
       .status(403)
       .render("urls_login", templateVars)
       .send("Incorrect password.\n");
@@ -378,10 +382,4 @@ app.post("/login", (req, res) => {
 app.post("/logout", (req, res) => {
   req.session = null;
   res.redirect("/login");
-});
-
-/*--------------------- Start Server ---------------------*/
-
-app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}!`);
 });
